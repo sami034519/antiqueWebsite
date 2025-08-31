@@ -139,11 +139,13 @@ const Header = () => {
               />
               {error && <p className="text-red-600 text-sm">{error}</p>}
               <button
-                type="submit"
-                className="w-full bg-yellow-600 text-white py-2 rounded-lg hover:bg-yellow-700"
-              >
-                Login
-              </button>
+            onClick={() => setShowLogin(true)}
+            className="relative hidden lg:block w-full bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg overflow-hidden group"
+            type='submit'
+          >
+            <span className="absolute inset-0 bg-primary translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-in-out"></span>
+            <span className="relative z-10 group-hover:text-white">Admin</span>
+          </button>
             </form>
           </div>
         </div>

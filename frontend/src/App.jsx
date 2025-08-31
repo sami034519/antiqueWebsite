@@ -1,28 +1,46 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Home from './components/home/Home';
 import Header from "./components/Header/Header";
 import Footer from './components/Footer/Footer';
+import Dashboard from './components/Dashboard/Dashboard';
+import ProductDetail from './components/ProductDetail/ProductDetail';
+import Jewellery from './components/Jwellery/Jwellery';
+import Antiques from './components/Antiques/Antiques';
 // Dummy page components (replace with real ones)
-const Antiques = () => <div className="p-4">🪙 Welcome to Antiques</div>;
-const Jewellery = () => <div className="p-4">💍 Discover Jewellery</div>;
+import ScrollToTop from './components/ScrollToTop/Scrolltotop';
+
 const Gemstones = () => <div className="p-4">💎 Explore Gemstones</div>;
 
+function Layout() {
+  const location = useLocation();
 
-function App() {
+  // Check if we are on dashboard route
+  const isDashboard = location.pathname.startsWith("/dashboard");
+
   return (
-    <Router>
-      <Header />
-
-      {/* Main content area */}
+    <>
+      {!isDashboard && <Header />}
+           <ScrollToTop/> 
       <Routes>
+        
         <Route path="/" element={<Home />} />
         <Route path="/antiques" element={<Antiques />} />
         <Route path="/jewellery" element={<Jewellery />} />
         <Route path="/gemstones" element={<Gemstones />} />
-
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/product/:id" element={<ProductDetail />} />
       </Routes>
-      <Footer/>
+
+      {!isDashboard && <Footer />}
+    </>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <Layout />
     </Router>
   );
 }

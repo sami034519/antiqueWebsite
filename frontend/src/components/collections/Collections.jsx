@@ -1,24 +1,68 @@
 import React, { useState, useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
-
-const categories = ["NEW ARRIVALS", "JWELLERY", "ANTIQUES", "GEMSTONES"];
-
-const products = [
-  { id: 1, title: "Golden Birds", discount: 46, image: "/images/birds.jpg" },
-  { id: 2, title: "Feather Wall Lamp", discount: 51, image: "/images/feather.jpg" },
-  { id: 3, title: "Giraffe Sculpture", discount: 41, image: "/images/giraffe.jpg" },
-  { id: 4, title: "Pink Wavy Mirror", discount: 35, image: "/images/mirror-pink.jpg" },
-  { id: 5, title: "Red Wavy Mirror", discount: 36, image: "/images/mirror-red.jpg" },
-  { id: 6, title: "Blue Wavy Mirror", discount: 35, image: "/images/mirror-blue.jpg" },
-];
+import { useNavigate } from "react-router-dom";
+const categories = ["NEW ARRIVALS", "JEWELLERY", "ANTIQUES", "GEMSTONES"];
 
 export default function Collection() {
   const [activeCategory, setActiveCategory] = useState("NEW ARRIVALS");
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    AOS.init({ duration: 800, easing: "ease-in-out", once: false});
+    AOS.init({ duration: 800, easing: "ease-in-out", once: false });
   }, []);
+
+  useEffect(() => {
+    fetchProducts(activeCategory);
+  }, [activeCategory]);
+
+  const fetchProducts = async (category) => {
+  setLoading(true);
+  try {
+    let url =
+      category === "NEW ARRIVALS"
+        ? "https://antiques.minnaminnie.com/get_products.php"
+        : `https://antiques.minnaminnie.com/get_products_by_category.php?category=${encodeURIComponent(
+            category
+          )}`;
+
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (data.status === "success" && Array.isArray(data.data)) {
+      let products = data.data;
+
+      if (category === "NEW ARRIVALS") {
+        // ✅ pick 1 product after each 5
+        products = products.filter((_, index) => (index + 1) % 2 === 0);
+      }
+
+      setProducts(products);
+    } else {
+      setProducts([]);
+    }
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    setProducts([]);
+  }
+  setLoading(false);
+};
+
+
+
+
+  const handleAddToCart = (product) => {
+    // 🔹 You can integrate Redux or Context here
+    console.log("Add to cart:", product);
+    alert(`${product.title} added to cart!`);
+  };
+
+   const navigate = useNavigate();
+
+  const handleSeeDetail = (id) => {
+    navigate(`/product/${id}`);
+  };
 
   return (
     <div className="px-6 md:px-12 py-12 overflow-hidden">
@@ -40,7 +84,11 @@ export default function Collection() {
       </h2>
 
       {/* Tabs */}
-      <div className="flex justify-center lg:mb-5" data-aos="fade-up" data-aos-delay="400">
+      <div
+        className="flex justify-center lg:mb-5"
+        data-aos="fade-up"
+        data-aos-delay="400"
+      >
         <div className="flex justify-center space-x-4 lg:space-x-8 border-b border-gray-200 mb-5 lg:mb-10">
           {categories.map((cat) => (
             <button
@@ -59,33 +107,58 @@ export default function Collection() {
       </div>
 
       {/* Product Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-        {products.map((product, index) => (
-          <div
-            key={product.id}
-            className="relative bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden"
-            data-aos="zoom-in"
-            data-aos-delay={index * 100} // stagger animation
-          >
-            {/* Discount Badge */}
-            <span className="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded">
-              SAVE {product.discount}%
-            </span>
+      {loading ? (
+        <p className="text-center text-gray-500">Loading products...</p>
+      ) : products.length === 0 ? (
+        <p className="text-center text-gray-500">No products found.</p>
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+          {products.map((product, index) => (
+           <div
+  key={product.id}
+  className="relative bg-slate-50 rounded-lg shadow hover:shadow-lg transition overflow-hidden"
+  data-aos="zoom-in"
+  data-aos-delay={index * 100} // stagger animation
+>
+  {/* New Tag - only for NEW ARRIVALS */}
+  {activeCategory === "NEW ARRIVALS" && (
+    <span className="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded">
+      NEW
+    </span>
+  )}
 
-            {/* Product Image */}
-            <img
-              src={product.image}
-              alt={product.title}
-              className="w-full h-60 object-cover"
-            />
+  {/* Product Image */}
+  <img
+    src={product.image}
+    alt={product.title}
+    className="w-full h-60 object-contain"
+  />
 
-            {/* Product Title */}
-            <div className="p-3 text-center">
-              <p className="text-sm font-medium">{product.title}</p>
-            </div>
-          </div>
-        ))}
-      </div>
+  {/* Product Info */}
+  <div className="p-3 text-center">
+    <p className="text-sm font-medium">{product.title}</p>
+    <p className="text-yellow-600 font-semibold">Rs. {product.price}</p>
+
+    <div className="mt-3 flex justify-center space-x-2">
+      <button
+        onClick={() => handleAddToCart(product)}
+        className="bg-yellow-600 text-white text-xs px-3 py-1 rounded hover:bg-yellow-700 transition"
+      >
+        Add to Cart
+      </button>
+      <button
+        onClick={() => handleSeeDetail(product.id)}
+        className="bg-gray-200 text-xs px-3 py-1 rounded hover:bg-gray-300 transition"
+      >
+        See Detail
+      </button>
+    </div>
+  </div>
+</div>
+
+          ))}
+        </div>
+      )}
     </div>
   );
 }
