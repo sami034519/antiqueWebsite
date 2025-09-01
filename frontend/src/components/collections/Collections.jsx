@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { useNavigate } from "react-router-dom";
+import ProductGrid2 from "../Gemstones/Gemstones2";
+
 const categories = ["NEW ARRIVALS", "JEWELLERY", "ANTIQUES", "GEMSTONES"];
 
 export default function Collection() {
@@ -14,51 +16,49 @@ export default function Collection() {
   }, []);
 
   useEffect(() => {
-    fetchProducts(activeCategory);
+    if (activeCategory !== "GEMSTONES") {
+      fetchProducts(activeCategory);
+    }
   }, [activeCategory]);
 
   const fetchProducts = async (category) => {
-  setLoading(true);
-  try {
-    let url =
-      category === "NEW ARRIVALS"
-        ? "https://antiques.minnaminnie.com/get_products.php"
-        : `https://antiques.minnaminnie.com/get_products_by_category.php?category=${encodeURIComponent(
-            category
-          )}`;
+    setLoading(true);
+    try {
+      let url =
+        category === "NEW ARRIVALS"
+          ? "https://antiques.minnaminnie.com/get_products.php"
+          : `https://antiques.minnaminnie.com/get_products_by_category.php?category=${encodeURIComponent(
+              category
+            )}`;
 
-    const res = await fetch(url);
-    const data = await res.json();
+      const res = await fetch(url);
+      const data = await res.json();
 
-    if (data.status === "success" && Array.isArray(data.data)) {
-      let products = data.data;
+      if (data.status === "success" && Array.isArray(data.data)) {
+        let products = data.data;
 
-      if (category === "NEW ARRIVALS") {
-        // ✅ pick 1 product after each 5
-        products = products.filter((_, index) => (index + 1) % 2 === 0);
+        if (category === "NEW ARRIVALS") {
+          // ✅ pick 1 product after each 2nd
+          products = products.filter((_, index) => (index + 1) % 2 === 0);
+        }
+
+        setProducts(products);
+      } else {
+        setProducts([]);
       }
-
-      setProducts(products);
-    } else {
+    } catch (error) {
+      console.error("Error fetching products:", error);
       setProducts([]);
     }
-  } catch (error) {
-    console.error("Error fetching products:", error);
-    setProducts([]);
-  }
-  setLoading(false);
-};
-
-
-
+    setLoading(false);
+  };
 
   const handleAddToCart = (product) => {
-    // 🔹 You can integrate Redux or Context here
     console.log("Add to cart:", product);
     alert(`${product.title} added to cart!`);
   };
 
-   const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleSeeDetail = (id) => {
     navigate(`/product/${id}`);
@@ -107,55 +107,59 @@ export default function Collection() {
       </div>
 
       {/* Product Grid */}
-      {loading ? (
+      {activeCategory === "GEMSTONES" ? (
+        // ✅ Show your ProductGrid when GEMSTONES is active
+        <ProductGrid2 />
+      ) : loading ? (
         <p className="text-center text-gray-500">Loading products...</p>
       ) : products.length === 0 ? (
         <p className="text-center text-gray-500">No products found.</p>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
           {products.map((product, index) => (
-           <div
-  key={product.id}
-  className="relative bg-slate-50 rounded-lg shadow hover:shadow-lg transition overflow-hidden"
-  data-aos="zoom-in"
-  data-aos-delay={index * 100} // stagger animation
->
-  {/* New Tag - only for NEW ARRIVALS */}
-  {activeCategory === "NEW ARRIVALS" && (
-    <span className="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded">
-      NEW
-    </span>
-  )}
+            <div
+              key={product.id}
+              className="relative bg-slate-50 rounded-lg shadow hover:shadow-lg transition overflow-hidden"
+              data-aos="zoom-in"
+              data-aos-delay={index * 100}
+            >
+              {/* New Tag - only for NEW ARRIVALS */}
+              {activeCategory === "NEW ARRIVALS" && (
+                <span className="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded">
+                  NEW
+                </span>
+              )}
 
-  {/* Product Image */}
-  <img
-    src={product.image}
-    alt={product.title}
-    className="w-full h-60 object-contain"
-  />
+              {/* Product Image */}
+              <img
+                src={product.image}
+                alt={product.title}
+                className="w-full h-60 object-contain"
+              />
 
-  {/* Product Info */}
-  <div className="p-3 text-center">
-    <p className="text-sm font-medium">{product.title}</p>
-    <p className="text-yellow-600 font-semibold">Rs. {product.price}</p>
+              {/* Product Info */}
+              <div className="p-3 text-center">
+                <p className="text-sm font-medium">{product.title}</p>
+                <p className="text-yellow-600 font-semibold">
+                  Rs. {product.price}
+                </p>
 
-    <div className="mt-3 flex justify-center space-x-2">
-      <button
-        onClick={() => handleAddToCart(product)}
-        className="bg-yellow-600 text-white text-xs px-3 py-1 rounded hover:bg-yellow-700 transition"
-      >
-        Add to Cart
-      </button>
-      <button
-        onClick={() => handleSeeDetail(product.id)}
-        className="bg-gray-200 text-xs px-3 py-1 rounded hover:bg-gray-300 transition"
-      >
-        See Detail
-      </button>
-    </div>
-  </div>
-</div>
-
+                <div className="mt-3 flex justify-center space-x-2">
+                  <button
+                    onClick={() => handleAddToCart(product)}
+                    className="bg-yellow-600 text-white text-xs px-3 py-1 rounded hover:bg-yellow-700 transition"
+                  >
+                    Add to Cart
+                  </button>
+                  <button
+                    onClick={() => handleSeeDetail(product.id)}
+                    className="bg-gray-200 text-xs px-3 py-1 rounded hover:bg-gray-300 transition"
+                  >
+                    See Detail
+                  </button>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       )}

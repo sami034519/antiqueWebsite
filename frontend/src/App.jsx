@@ -7,10 +7,11 @@ import Dashboard from './components/Dashboard/Dashboard';
 import ProductDetail from './components/ProductDetail/ProductDetail';
 import Jewellery from './components/Jwellery/Jwellery';
 import Antiques from './components/Antiques/Antiques';
+import ProductGrid from './components/Gemstones/Gemstones';
 // Dummy page components (replace with real ones)
 import ScrollToTop from './components/ScrollToTop/Scrolltotop';
 
-const Gemstones = () => <div className="p-4">💎 Explore Gemstones</div>;
+
 
 function Layout() {
   const location = useLocation();
@@ -27,7 +28,7 @@ function Layout() {
         <Route path="/" element={<Home />} />
         <Route path="/antiques" element={<Antiques />} />
         <Route path="/jewellery" element={<Jewellery />} />
-        <Route path="/gemstones" element={<Gemstones />} />
+        <Route path="/gemstones" element={<ProductGrid />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/product/:id" element={<ProductDetail />} />
       </Routes>
