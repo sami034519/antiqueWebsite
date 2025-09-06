@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";     // 👈 Redux hook
+import { addToCart } from "../redux/Cartslice"; // 👈 cart action
 import ProductGrid2 from "../Gemstones/Gemstones2";
 
 const categories = ["NEW ARRIVALS", "JEWELLERY", "ANTIQUES", "GEMSTONES"];
@@ -10,6 +12,9 @@ export default function Collection() {
   const [activeCategory, setActiveCategory] = useState("NEW ARRIVALS");
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const dispatch = useDispatch();  // 👈 get Redux dispatch
+  const navigate = useNavigate();
 
   useEffect(() => {
     AOS.init({ duration: 800, easing: "ease-in-out", once: false });
@@ -53,12 +58,18 @@ export default function Collection() {
     setLoading(false);
   };
 
+  // ✅ Add to Cart logic with Redux
   const handleAddToCart = (product) => {
-    console.log("Add to cart:", product);
+    dispatch(
+      addToCart({
+        id: product.id,
+        name: product.title,
+        price: Number(product.price),
+        image: product.image,
+      })
+    );
     alert(`${product.title} added to cart!`);
   };
-
-  const navigate = useNavigate();
 
   const handleSeeDetail = (id) => {
     navigate(`/product/${id}`);

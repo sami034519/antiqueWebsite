@@ -2,10 +2,14 @@ import React, { useState, useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../redux/Cartslice"; // adjust path
 
 export default function Jewellery() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     AOS.init({ duration: 800, easing: "ease-in-out", once: false });
@@ -34,11 +38,15 @@ export default function Jewellery() {
     setLoading(false);
   };
 
-  const navigate = useNavigate();
-
   const handleAddToCart = (product) => {
-    console.log("Add to cart:", product);
-    alert(`${product.title} added to cart!`);
+    dispatch(
+      addToCart({
+        id: product.id,
+        name: product.title,
+        price: product.price,
+        image: product.image,
+      })
+    );
   };
 
   const handleSeeDetail = (id) => {
@@ -47,7 +55,6 @@ export default function Jewellery() {
 
   return (
     <div className="px-6 md:px-12 mt-20 py-12 overflow-hidden">
-      {/* Subtitle */}
       <p
         className="text-center text-sm font-semibold tracking-wider uppercase"
         data-aos="fade-up"
@@ -55,7 +62,6 @@ export default function Jewellery() {
         Elegant & Premium
       </p>
 
-      {/* Title */}
       <h2
         className="text-center text-5xl font-bold mt-2 mb-8 lg:pt-3"
         data-aos="fade-up"
@@ -64,7 +70,6 @@ export default function Jewellery() {
         Jewellery Collection
       </h2>
 
-      {/* Product Grid */}
       {loading ? (
         <p className="text-center text-gray-500">Loading jewellery...</p>
       ) : products.length === 0 ? (
@@ -78,17 +83,17 @@ export default function Jewellery() {
               data-aos="zoom-in"
               data-aos-delay={index * 100}
             >
-              {/* Product Image */}
               <img
                 src={product.image}
                 alt={product.title}
                 className="w-full h-60 object-contain"
               />
 
-              {/* Product Info */}
               <div className="p-3 text-center">
                 <p className="text-sm font-medium">{product.title}</p>
-                <p className="text-yellow-600 font-semibold">Rs. {product.price}</p>
+                <p className="text-yellow-600 font-semibold">
+                  Rs. {product.price}
+                </p>
 
                 <div className="mt-3 flex justify-center space-x-2">
                   <button

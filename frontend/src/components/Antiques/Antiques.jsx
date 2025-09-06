@@ -2,10 +2,15 @@ import React, { useState, useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";     // 👈 import Redux hook
+import { addToCart } from "../redux/Cartslice";  // 👈 import cart action
 
 export default function Antiques() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const dispatch = useDispatch();   // 👈 get dispatch function
+  const navigate = useNavigate();
 
   useEffect(() => {
     AOS.init({ duration: 800, easing: "ease-in-out", once: false });
@@ -34,10 +39,17 @@ export default function Antiques() {
     setLoading(false);
   };
 
-  const navigate = useNavigate();
-
   const handleAddToCart = (product) => {
-    console.log("Add to cart:", product);
+    // Dispatch product to Redux cart
+    dispatch(
+      addToCart({
+        id: product.id,
+        name: product.title,
+        price: Number(product.price),  // ensure it's a number
+        image: product.image,
+      })
+    );
+
     alert(`${product.title} added to cart!`);
   };
 
@@ -88,7 +100,9 @@ export default function Antiques() {
               {/* Product Info */}
               <div className="p-3 text-center">
                 <p className="text-sm font-medium">{product.title}</p>
-                <p className="text-yellow-600 font-semibold">Rs. {product.price}</p>
+                <p className="text-yellow-600 font-semibold">
+                  Rs. {product.price}
+                </p>
 
                 <div className="mt-3 flex justify-center space-x-2">
                   <button

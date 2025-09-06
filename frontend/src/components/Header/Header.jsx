@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { FaShoppingCart, FaSearch, FaBars, FaTimes } from 'react-icons/fa';
-import logo from '../../images/antiquelogo.jpg';
-
+import React, { useState, useEffect } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { FaShoppingCart, FaSearch, FaBars, FaTimes } from "react-icons/fa";
+import logo from "../../images/antiquelogo.jpg";
+import { useSelector } from "react-redux";
 const Header = () => {
   const [showInfoBar, setShowInfoBar] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -12,6 +12,10 @@ const Header = () => {
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
+  const cartItems = useSelector((state) => state.cart.items);
+
+  // ✅ total quantity (summing all items)
+  const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -41,8 +45,9 @@ const Header = () => {
       {showInfoBar && (
         <div className="bg-primary text-gray-800 text-sm px-4 py-2 animate-slide-down">
           <p className="text-center font-semibold text-white  lg:text-lg">
-            Explore our unique collections of <strong>Antiques</strong>, <strong>Jewellery</strong>, and <strong>Gemstones</strong>! 
-            Enjoy <strong>up to 30% off</strong> on selected items.
+            Explore our unique collections of <strong>Antiques</strong>,{" "}
+            <strong>Jewellery</strong>, and <strong>Gemstones</strong>! Enjoy{" "}
+            <strong>up to 30% off</strong> on selected items.
           </p>
         </div>
       )}
@@ -51,31 +56,69 @@ const Header = () => {
       <div className="bg-white flex items-center justify-around px-4 md:px-8 py-3">
         {/* Logo */}
         <div className="text-xl font-bold text-gray-800">
-          <NavLink to='/'>
+          <NavLink  to="/">
             <img className="lg:w-60 w-48" src={logo} alt="Logo" />
           </NavLink>
         </div>
 
         {/* Center Links */}
         <nav className="hidden md:flex gap-6 text-gray-700">
-          <NavLink to="/" className={({ isActive }) =>
-            isActive ? "text-yellow-600 font-bold border-b-2 border-b-yellow-600"
-              : "hover:text-yellow-600 font-semibold"}>Home</NavLink>
-          <NavLink to="/antiques" className={({ isActive }) =>
-            isActive ? "text-yellow-600 font-bold border-b-2 border-b-yellow-600"
-              : "hover:text-yellow-600 font-semibold"}>Antiques</NavLink>
-          <NavLink to="/jewellery" className={({ isActive }) =>
-            isActive ? "text-yellow-600 font-bold border-b-2 border-b-yellow-600"
-              : "hover:text-yellow-600 font-semibold"}>Jewellery</NavLink>
-          <NavLink to="/gemstones" className={({ isActive }) =>
-            isActive ? "text-yellow-600 font-bold border-b-2 border-b-yellow-600"
-              : "hover:text-yellow-600 font-semibold"}>Gemstones</NavLink>
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              isActive
+                ? "text-yellow-600 font-bold border-b-2 border-b-yellow-600"
+                : "hover:text-yellow-600 font-semibold"
+            }
+          >
+            Home
+          </NavLink>
+          <NavLink
+            to="/antiques"
+            className={({ isActive }) =>
+              isActive
+                ? "text-yellow-600 font-bold border-b-2 border-b-yellow-600"
+                : "hover:text-yellow-600 font-semibold"
+            }
+          >
+            Antiques
+          </NavLink>
+          <NavLink
+            to="/jewellery"
+            className={({ isActive }) =>
+              isActive
+                ? "text-yellow-600 font-bold border-b-2 border-b-yellow-600"
+                : "hover:text-yellow-600 font-semibold"
+            }
+          >
+            Jewellery
+          </NavLink>
+          <NavLink
+            to="/gemstones"
+            className={({ isActive }) =>
+              isActive
+                ? "text-yellow-600 font-bold border-b-2 border-b-yellow-600"
+                : "hover:text-yellow-600 font-semibold"
+            }
+          >
+            Gemstones
+          </NavLink>
         </nav>
 
         {/* Right Icons */}
         <div className="flex items-center gap-4">
           <FaSearch className="text-gray-700 lg:text-4xl cursor-pointer hover:text-yellow-600" />
-          <FaShoppingCart className="text-gray-700 lg:text-4xl cursor-pointer hover:text-yellow-600" />
+         <NavLink to="/cartpage" className="relative">
+        <FaShoppingCart className="text-gray-700 lg:text-xl cursor-pointer hover:text-yellow-600" />
+
+        {/* Badge */}
+        {totalQuantity > 0 && (
+          <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
+            {totalQuantity}
+          </span>
+        )}
+      </NavLink>
+          
 
           {/* Admin Button */}
           <button
@@ -99,11 +142,32 @@ const Header = () => {
       {/* Mobile Menu */}
       {menuOpen && (
         <div className="md:hidden bg-white px-4 pb-4 space-y-2">
-          <NavLink to="/antiques" className="block border-b border-t border-t-primary text-gray-700 hover:text-yellow-600" onClick={() => setMenuOpen(false)}>Antiques</NavLink>
-          <NavLink to="/jewellery" className="block border-b text-gray-700 hover:text-yellow-600" onClick={() => setMenuOpen(false)}>Jewellery</NavLink>
-          <NavLink to="/gemstones" className="block border-b text-gray-700 hover:text-yellow-600" onClick={() => setMenuOpen(false)}>Gemstones</NavLink>
+          <NavLink
+            to="/antiques"
+            className="block border-b border-t border-t-primary text-gray-700 hover:text-yellow-600"
+            onClick={() => setMenuOpen(false)}
+          >
+            Antiques
+          </NavLink>
+          <NavLink
+            to="/jewellery"
+            className="block border-b text-gray-700 hover:text-yellow-600"
+            onClick={() => setMenuOpen(false)}
+          >
+            Jewellery
+          </NavLink>
+          <NavLink
+            to="/gemstones"
+            className="block border-b text-gray-700 hover:text-yellow-600"
+            onClick={() => setMenuOpen(false)}
+          >
+            Gemstones
+          </NavLink>
           <button
-            onClick={() => { setMenuOpen(false); setShowLogin(true); }}
+            onClick={() => {
+              setMenuOpen(false);
+              setShowLogin(true);
+            }}
             className="w-full bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg"
           >
             Admin
@@ -121,7 +185,9 @@ const Header = () => {
             >
               <FaTimes size={20} />
             </button>
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Admin Login</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              Admin Login
+            </h2>
             <form onSubmit={handleLogin} className="space-y-4">
               <input
                 type="text"
@@ -139,13 +205,15 @@ const Header = () => {
               />
               {error && <p className="text-red-600 text-sm">{error}</p>}
               <button
-            onClick={() => setShowLogin(true)}
-            className="relative hidden lg:block w-full bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg overflow-hidden group"
-            type='submit'
-          >
-            <span className="absolute inset-0 bg-primary translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-in-out"></span>
-            <span className="relative z-10 group-hover:text-white">Admin</span>
-          </button>
+                onClick={() => setShowLogin(true)}
+                className="relative hidden lg:block w-full bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg overflow-hidden group"
+                type="submit"
+              >
+                <span className="absolute inset-0 bg-primary translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-in-out"></span>
+                <span className="relative z-10 group-hover:text-white">
+                  Admin
+                </span>
+              </button>
             </form>
           </div>
         </div>

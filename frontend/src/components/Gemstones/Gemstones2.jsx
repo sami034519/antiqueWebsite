@@ -1,77 +1,31 @@
 import React, { useState } from "react";
-import vid1pic from '../../images/vid1pic.png'
-import vid2pic from '../../images/vid2pic.png'
-import vid3pic from '../../images/vid3pic.png'
-import vid4pic from '../../images/vid4pic.png'
-import vid5pic from '../../images/vid5pic.png'
-import vid6pic from '../../images/vid6pic.png'
-import vid7pic from '../../images/vid7pic.png'
+import { useDispatch } from "react-redux";
+import { addToCart } from "../redux/Cartslice"; // adjust path
+import vid1pic from "../../images/vid1pic.png";
+import vid2pic from "../../images/vid2pic.png";
+import vid3pic from "../../images/vid3pic.png";
+import vid4pic from "../../images/vid4pic.png";
+import vid5pic from "../../images/vid5pic.png";
+import vid6pic from "../../images/vid6pic.png";
+import vid7pic from "../../images/vid7pic.png";
 import { FaPlayCircle } from "react-icons/fa";
+
 const ProductGrid2 = () => {
   const [activeVideo, setActiveVideo] = useState(null);
+  const dispatch = useDispatch();
 
   const products = [
-    {
-      id: 1,
-      title: "Emerald and Diamond Ring",
-      price: 1200,
-      image: vid1pic,
-      video: "https://www.youtube.com/embed/nKuOkfBz2aU"
-    },
-    {
-      id: 2,
-      title: "Classic Painting",
-      price: 3000,
-      image: vid2pic,
-      video: "https://www.youtube.com/embed/k-scTpyVPWI"
-    },
-    {
-      id: 3,
-      title: "Vintage Clock",
-      price: 2500,
-      image: vid3pic,
-      video: "https://www.youtube.com/embed/dnFHjAZuJJU"
-    },
-    {
-      id: 4,
-      title: "Vintage Clock",
-      price: 2500,
-      image: vid4pic,
-      
-      video: "https://www.youtube.com/embed/KxidWRu7OVA"
-    },
-    {
-      id: 5,
-      title: "Vintage Clock",
-      price: 2500,
-      image: vid5pic,
-    
-      video: "https://www.youtube.com/embed/I9ZClswwgCg?feature=share"
-    },
-    {
-      id: 6,
-      title: "Vintage Clock",
-      price: 2500,
-      image: vid6pic,
-     
-      video: "https://www.youtube.com/tqseHi2qYy0"
-    },
-    {
-      id: 7,
-      title: "Vintage Clock",
-      price: 2500,
-      image: vid7pic,
-    
-      video: "https://www.youtube.com/embed/XbJIdI-U-oM"
-    }
+    { id: 201, title: "Emerald and Diamond Ring", price: 1200, image: vid1pic, video: "https://www.youtube.com/embed/nKuOkfBz2aU" },
+    { id: 202, title: "Classic Painting", price: 3000, image: vid2pic, video: "https://www.youtube.com/embed/k-scTpyVPWI" },
+    { id: 203, title: "Vintage Clock", price: 2500, image: vid3pic, video: "https://www.youtube.com/embed/dnFHjAZuJJU" },
+    { id: 204, title: "Vintage Clock", price: 2500, image: vid4pic, video: "https://www.youtube.com/embed/KxidWRu7OVA" },
+    { id: 205, title: "Vintage Clock", price: 2500, image: vid5pic, video: "https://www.youtube.com/embed/I9ZClswwgCg?feature=share" },
+    { id: 206, title: "Vintage Clock", price: 2500, image: vid6pic, video: "https://www.youtube.com/tqseHi2qYy0" },
+    { id: 207, title: "Vintage Clock", price: 2500, image: vid7pic, video: "https://www.youtube.com/embed/XbJIdI-U-oM" },
   ];
 
   return (
-   <div className="px-6 md:px-12 py-12 overflow-hidden">
-      {/* Subtitle */}
-      
-
-      {/* Product Grid */}
+    <div className="px-6 md:px-12 py-12 overflow-hidden">
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {products.map((product, index) => (
           <div
@@ -104,7 +58,6 @@ const ProductGrid2 = () => {
                     alt={product.title}
                     className="w-full h-full object-cover"
                   />
-                  {/* Video Icon Overlay */}
                   <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 opacity-0 hover:opacity-100 transition">
                     <FaPlayCircle className="text-white text-5xl drop-shadow-lg" />
                   </div>
@@ -120,10 +73,23 @@ const ProductGrid2 = () => {
               </p>
 
               <div className="mt-3 flex justify-center space-x-2">
-                <button className="bg-yellow-600 text-white text-xs px-3 py-1 rounded hover:bg-yellow-700 transition">
+                <button
+                  onClick={() =>
+                    dispatch(
+                      addToCart({
+                        id: product.id,
+                        name: product.title,
+                        price: product.price,
+                        image: product.image,
+                      })
+                       
+                    )
+                   
+                  }
+                  className="bg-yellow-600 text-white text-xs px-3 py-1 rounded hover:bg-yellow-700 transition"
+                >
                   Add to Cart
                 </button>
-                
               </div>
             </div>
           </div>

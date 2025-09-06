@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";   // ✅ Redux hook
+import { addToCart } from "../redux/Cartslice"; // ✅ cart action
 import vid1pic from '../../images/vid1pic.png'
 import vid2pic from '../../images/vid2pic.png'
 import vid3pic from '../../images/vid3pic.png'
@@ -7,67 +9,78 @@ import vid5pic from '../../images/vid5pic.png'
 import vid6pic from '../../images/vid6pic.png'
 import vid7pic from '../../images/vid7pic.png'
 import { FaPlayCircle } from "react-icons/fa";
+
 const ProductGrid = () => {
   const [activeVideo, setActiveVideo] = useState(null);
+  const dispatch = useDispatch(); // ✅ for dispatching actions
 
   const products = [
     {
-      id: 1,
+      id: 101,
       title: "Emerald and Diamond Ring",
       price: 1200,
       image: vid1pic,
       video: "https://www.youtube.com/embed/nKuOkfBz2aU"
     },
     {
-      id: 2,
+      id: 102,
       title: "Classic Painting",
       price: 3000,
       image: vid2pic,
       video: "https://www.youtube.com/embed/k-scTpyVPWI"
     },
     {
-      id: 3,
+      id: 103,
       title: "Vintage Clock",
       price: 2500,
       image: vid3pic,
       video: "https://www.youtube.com/embed/dnFHjAZuJJU"
     },
     {
-      id: 4,
+      id: 104,
       title: "Vintage Clock",
       price: 2500,
       image: vid4pic,
-      
       video: "https://www.youtube.com/embed/KxidWRu7OVA"
     },
     {
-      id: 5,
+      id: 105,
       title: "Vintage Clock",
       price: 2500,
       image: vid5pic,
-    
       video: "https://www.youtube.com/embed/I9ZClswwgCg?feature=share"
     },
     {
-      id: 6,
+      id: 106,
       title: "Vintage Clock",
       price: 2500,
       image: vid6pic,
-     
-      video: "https://www.youtube.com/tqseHi2qYy0"
+      video: "https://www.youtube.com/embed/tqseHi2qYy0"
     },
     {
-      id: 7,
+      id: 107,
       title: "Vintage Clock",
       price: 2500,
       image: vid7pic,
-    
       video: "https://www.youtube.com/embed/XbJIdI-U-oM"
     }
   ];
 
+  // ✅ handle add to cart
+  const handleAddToCart = (product) => {
+      dispatch(
+        addToCart({
+          id: product.id,
+          name: product.title,
+          price: Number(product.price),
+          image: product.image,
+        })
+      );
+      alert(`${product.title} added to cart!`);
+    };
+
   return (
-   <div className="px-6 md:px-12 mt-20 py-12 overflow-hidden">
+    <div className="px-6 md:px-12 mt-20 py-12 overflow-hidden">
       {/* Subtitle */}
       <p
         className="text-center text-sm font-semibold tracking-wider uppercase"
@@ -134,10 +147,12 @@ const ProductGrid = () => {
               </p>
 
               <div className="mt-3 flex justify-center space-x-2">
-                <button className="bg-yellow-600 text-white text-xs px-3 py-1 rounded hover:bg-yellow-700 transition">
+                <button
+                  onClick={() => handleAddToCart(product)} // ✅ wired up
+                  className="bg-yellow-600 text-white text-xs px-3 py-1 rounded hover:bg-yellow-700 transition"
+                >
                   Add to Cart
                 </button>
-                
               </div>
             </div>
           </div>
